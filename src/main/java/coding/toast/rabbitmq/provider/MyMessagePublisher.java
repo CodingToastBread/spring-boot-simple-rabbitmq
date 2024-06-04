@@ -8,19 +8,19 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class MyMessageProvider {
+public class MyMessagePublisher {
 	
 	private final TopicExchange myTopicExchange;
 	private final DirectExchange myDirectExchange;
+	// 자동설정에 의해 생성된 rabbitTemplate 사용,
+	// 참고로 MessageCommunicationConfig 에서 커스텀 설정도 마친 상태입니다!
+	private final RabbitTemplate jsonRabbitTemplate;
 	
-	private RabbitTemplate rabbitTemplate;
-	
-	public void directMsgPub(String msg) {
-		rabbitTemplate.convertAndSend(myTopicExchange.getName(), msg);
+	public void directMsgPub(String routingKey, Object msg) {
+		jsonRabbitTemplate.convertAndSend(myDirectExchange.getName(), routingKey, msg);
 	}
 	
-	public void topicMsgPub() {
-		
+	public void topicMsgPub(String routingKey, Object msg) {
+		jsonRabbitTemplate.convertAndSend(myTopicExchange.getName(), routingKey, msg);
 	}
-	
 }
